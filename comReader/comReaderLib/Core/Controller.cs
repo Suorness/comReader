@@ -56,23 +56,24 @@ namespace comReaderLib.Core
         }
         public void TestDB()
         {
-            using (var db = new ContextReader3())
+            using (var db = new ContextReader())
             {
                 Person person = new Person();
-                DataControl dataControls = new DataControl();
-                dataControls.NumberCard = "1final test";
-                dataControls.NumberDevice = "1test";
-                dataControls.Time = DateTime.Now;
-                db.listOfData.Add(dataControls);
+                CheckPointEntry checkPointEntries = new CheckPointEntry();
+                checkPointEntries.CardNumber = "1final test";
+                checkPointEntries.DeviceNumber = "1test";
+                checkPointEntries.CheckDate = DateTime.Now;
+                db.CheckPointEntries.Add(checkPointEntries);
                 person.FirstName = "1now test";
                 person.LastName = "1ok";
-                person.NumberCard = "   1string";
-                person.NumberCard = "1test";
-                db.listOfPerson.Add(person);
+                person.CardNumber = "   1string";
+                person.CardNumber = "1test";
+                db.Persons.Add(person);
                 db.SaveChanges();
             }
 
         }
+
         private void OnTimedUpdata(Object source, ElapsedEventArgs e)
         {
             view.ShowText("Обновление данных и устройств");

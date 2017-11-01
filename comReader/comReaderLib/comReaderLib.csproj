@@ -50,7 +50,7 @@
     <Compile Include="Core\Controller.cs" />
     <Compile Include="Core\Reader.cs" />
     <Compile Include="Domain\Context.cs" />
-    <Compile Include="Domain\DataControl.cs" />
+    <Compile Include="Domain\CheckPointEntry.cs" />
     <Compile Include="Domain\Person.cs" />
     <Compile Include="Interfaces\IView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

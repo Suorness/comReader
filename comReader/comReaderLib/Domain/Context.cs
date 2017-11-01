@@ -2,9 +2,24 @@
 
 namespace comReaderLib.Domain
 {
-    public class ContextReader3: DbContext
+    public class ContextReader : DbContext
     {
-        public DbSet <Person> listOfPerson { get; set; }
-        public DbSet <DataControl> listOfData { get; set; }
+        public ContextReader()
+        : base("comReaderDB")
+        {
+        }
+
+        public DbSet<Person> Persons { get; set; }
+        public DbSet<CheckPointEntry> CheckPointEntries { get; set; }
+
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<CheckPointEntry>()
+                .HasKey(p => p.Id);
+
+            modelBuilder.Entity<Person>()
+                .HasKey(p => p.Id);
+            
+        }
     }
 }
