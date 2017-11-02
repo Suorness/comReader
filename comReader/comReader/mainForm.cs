@@ -16,22 +16,16 @@ namespace comReader
     public partial class mainForm : Form
     {
         Controller controller = null;
-
+        FormView formView = new FormView();
         public mainForm()
         {
             InitializeComponent();
-            controller = Controller.GetInstanse(new FormView(listEvent));
-            controller.Start();
-        }
-
-        public ListBox GetListBox()
-        {
-            return listEvent;
         }
 
         private void mainForm_Load(object sender, EventArgs e)
         {
-
+            controller = Controller.GetInstanse(formView);
+            controller.Start();
         }
 
         private void trayIcon_MouseClick(object sender, MouseEventArgs e)
@@ -53,20 +47,42 @@ namespace comReader
 
         private void bnStop_Click(object sender, EventArgs e)
         {
-            
+            controller.Stop();
+            bnStop.Enabled = false;
+            bnStart.Enabled = true;
         }
-        //class FormView : IView
-        //{
-        //    public void ShowText(string str)
-        //    {
-        //        listData.Items.Add(str + "\r\n");
-        //    }
 
-        //    public FormView(ref ListBox list)
-        //    {
-        //        listData = list;
-        //    }
-        //    ListBox listData;
-        //}
+        private void timerUpdateLog_Tick(object sender, EventArgs e)
+        {
+            //int actualIndex = listEvent.SelectedIndex;
+            //listEvent.DataSource = null;
+            //listEvent.DataSource = formView.GetData();
+            //listEvent.DisplayMember = "Name";
+            //listEvent.ValueMember = "Id";
+            //listEvent.SelectedIndex = actualIndex;
+            //listEvent.Invalidate();
+            AddNewItem();
+        }
+
+        private void AddNewItem()
+        {
+            var newList = formView.GetData();
+            int index = 1;
+            foreach(var item in newList)
+            {
+                if (index>listEvent.Items.Count)
+                {
+                    listEvent.Items.Add(item);
+                }
+                index++;
+            }
+        }
+
+        private void bnStart_Click(object sender, EventArgs e)
+        {
+            controller.Resume();
+            bnStart.Enabled = false;
+            bnStop.Enabled = true;
+        }
     }
 }

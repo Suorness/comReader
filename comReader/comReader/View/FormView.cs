@@ -1,6 +1,7 @@
 ﻿using comReaderLib.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,13 +13,25 @@ namespace comReader.View
     {
         public void ShowText(string str)
         {
-            listData.Items.Add(str + "\r\n");                      
-        }
 
-        public FormView (ListBox list)
-        {
-            listData = list;
+            data.Add(str + "\r\n");
+            
         }
-        ListBox listData;
+        public List<string> GetData()
+        {
+            //var newData = data.Cop
+            return data;
+        }
+        public FormView ()
+        {
+        }
+        List<string> data = new List<string>();
+        //private int count = 0;
+        //BindingList<MyData> data = new BindingList<MyData>();
+        //public class MyData
+        //{
+        //    public string Name { get; set; }
+        //    public int Id { get; set; }
+        //}
     }
 }

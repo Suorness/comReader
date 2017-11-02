@@ -35,6 +35,7 @@
             this.bnStart = new System.Windows.Forms.Button();
             this.listEvent = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.timerUpdateLog = new System.Windows.Forms.Timer(this.components);
             this.SuspendLayout();
             // 
             // trayIcon
@@ -62,6 +63,7 @@
             this.bnStart.TabIndex = 1;
             this.bnStart.Text = "Возобновить получение данных";
             this.bnStart.UseVisualStyleBackColor = true;
+            this.bnStart.Click += new System.EventHandler(this.bnStart_Click);
             // 
             // listEvent
             // 
@@ -83,6 +85,12 @@
             this.label1.Size = new System.Drawing.Size(145, 17);
             this.label1.TabIndex = 3;
             this.label1.Text = "Последние события:";
+            // 
+            // timerUpdateLog
+            // 
+            this.timerUpdateLog.Enabled = true;
+            this.timerUpdateLog.Interval = 1000;
+            this.timerUpdateLog.Tick += new System.EventHandler(this.timerUpdateLog_Tick);
             // 
             // mainForm
             // 
@@ -109,6 +117,7 @@
         private System.Windows.Forms.Button bnStart;
         private System.Windows.Forms.Label label1;
         public System.Windows.Forms.ListBox listEvent;
+        private System.Windows.Forms.Timer timerUpdateLog;
     }
 }
 
