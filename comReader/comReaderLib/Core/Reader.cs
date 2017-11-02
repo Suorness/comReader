@@ -21,7 +21,7 @@ namespace comReaderLib.Core
             serialPort.StopBits = StopBits.One;
             serialPort.Open();
 
-            deviceNumber = DeviceNumber();
+            deviceNumber = GetDeviceNumber();
             if (deviceNumber != null)
             {
                 IsActive = true;
@@ -31,12 +31,21 @@ namespace comReaderLib.Core
                 serialPort.Close();
             }
         }
-        public void sendRequest()
+        /// <summary>
+        /// Отправляет команду заполнения буфера устройства данными
+        /// </summary>
+        public void SendRequest()
         {
             //"#05244 r" + "\r\n";
             serialPort.WriteLine("#" + deviceNumber + " r" + "\r\n");
         }
-        public string getResponsу()
+        /// <summary>
+        /// Получение данных из буфера устройства
+        /// </summary>
+        /// <returns>
+        /// Данные из буфера
+        /// </returns>
+        public string GetResponsу()
         {
             string str = null;
             str = serialPort.ReadExisting();
@@ -46,13 +55,17 @@ namespace comReaderLib.Core
             }
             return str;
         }
-        private string DeviceNumber()
+        /// <summary>
+        /// Получение номера устройства
+        /// </summary>
+        /// <returns></returns>
+        private string GetDeviceNumber()
         {
             string result = null;
 
             serialPort.WriteLine("i");
             Thread.Sleep(500);
-            string responsy = getResponsу();
+            string responsy = GetResponsу();
             string pattern = @"S/N:(\d+)";
             Regex regex = new Regex(pattern);
             MatchCollection matchGroup = regex.Matches(responsy);
@@ -63,11 +76,23 @@ namespace comReaderLib.Core
             }
             return result;
         }
+        /// <summary>
+        /// Получение ответов от устройства
+        /// </summary>
         public bool IsActive { get; set; }
+        /// <summary>
+        ///  Порт устройства
+        /// </summary>
         public string Port { get; }
+        /// <summary>
+        /// Номер устройства
+        /// </summary>
+        public string DeviceNumber { get => deviceNumber; }
+
 
         private SerialPort serialPort;
         private string port;
         private string deviceNumber = null;
+
     }
 }

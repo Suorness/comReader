@@ -48,18 +48,21 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Controller.cs" />
+    <Compile Include="Core\Factory.cs" />
     <Compile Include="Core\Reader.cs" />
+    <Compile Include="Dao\DAOContext.cs" />
+    <Compile Include="Dao\DAOContextImpl.cs" />
     <Compile Include="Domain\Context.cs" />
     <Compile Include="Domain\CheckPointEntry.cs" />
     <Compile Include="Domain\Person.cs" />
     <Compile Include="Interfaces\IView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Dao\" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,6 @@
 ﻿using comReader.View;
 using comReaderLib.Core;
+using comReaderLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,13 +20,18 @@ namespace comReader
         public mainForm()
         {
             InitializeComponent();
+            controller = Controller.GetInstanse(new FormView(listEvent));
+            controller.Start();
+        }
+
+        public ListBox GetListBox()
+        {
+            return listEvent;
         }
 
         private void mainForm_Load(object sender, EventArgs e)
         {
-            // singltone 
-            controller = Controller.GetInstanse(new FormView());
-            controller.TestDB();
+
         }
 
         private void trayIcon_MouseClick(object sender, MouseEventArgs e)
@@ -44,5 +50,23 @@ namespace comReader
                 trayIcon.Visible = true;
             }
         }
+
+        private void bnStop_Click(object sender, EventArgs e)
+        {
+            
+        }
+        //class FormView : IView
+        //{
+        //    public void ShowText(string str)
+        //    {
+        //        listData.Items.Add(str + "\r\n");
+        //    }
+
+        //    public FormView(ref ListBox list)
+        //    {
+        //        listData = list;
+        //    }
+        //    ListBox listData;
+        //}
     }
 }

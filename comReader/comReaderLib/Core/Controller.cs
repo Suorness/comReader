@@ -1,10 +1,12 @@
-﻿using comReaderLib.Domain;
+﻿using comReaderLib.Dao;
+using comReaderLib.Domain;
 using comReaderLib.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
@@ -20,7 +22,10 @@ namespace comReaderLib.Core
             timerUpdate.Interval = 5000;
             timerUpdate.Elapsed += OnTimedUpdata;
             this.view = view;
+            factory = Factory.GetInstance();
+            dao = factory.GetDao();
         }
+
         public static Controller GetInstanse(IView view)
         {
             if (controller == null)
@@ -30,10 +35,13 @@ namespace comReaderLib.Core
             }
             return controller;
         }
+        /// <summary>
+        /// Запуск контроллера
+        /// </summary>
         public void Start()
         {
             listReader = new List<Reader>();
-            List<String> list = getListPort();
+            List<String> list = GetListPort();
             view.ShowText("Начало работы");
             foreach (var com in list)
             {
@@ -51,42 +59,60 @@ namespace comReaderLib.Core
 
             }
             timerUpdate.Enabled = true;
-            //TODO
-            while (true) { }
         }
-        public void TestDB()
+        /// <summary>
+        /// Останавливает обновление данных
+        /// </summary>
+        public void Stop()
         {
-            using (var db = new ContextReader())
-            {
-                Person person = new Person();
-                CheckPointEntry checkPointEntries = new CheckPointEntry();
-                checkPointEntries.CardNumber = "1final test";
-                checkPointEntries.DeviceNumber = "1test";
-                checkPointEntries.CheckDate = DateTime.Now;
-                db.CheckPointEntries.Add(checkPointEntries);
-                person.FirstName = "1now test";
-                person.LastName = "1ok";
-                person.CardNumber = "   1string";
-                person.CardNumber = "1test";
-                db.Persons.Add(person);
-                db.SaveChanges();
-            }
-
+            timerUpdate.Enabled = false;
         }
-
+        /// <summary>
+        /// Возобновляет обновление данных
+        /// </summary>
+        public void Resume()
+        {
+            timerUpdate.Enabled = true;
+        }
+        /// <summary>
+        /// Обновление данных с устройст по таймеру
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="e"></param>
         private void OnTimedUpdata(Object source, ElapsedEventArgs e)
         {
             view.ShowText("Обновление данных и устройств");
-            checkListReader();
-            getData();
 
+            CheckListReader();
+            var list = GetData();
+            try
+            {
+                dao.AddCheckPoint(list);
+                foreach (var point in list)
+                {
+                    if (!dao.CheckPerson(point.CardNumber))
+                    {
+                        var person = new Person();
+                        person.CardNumber = point.CardNumber;                       
+                        dao.AddPerson(person);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                string message = "Произошла ошибка при работе с базой данных" + ex.Message;
+                view.ShowText(message);
+            }      
         }
-
-        private void checkListReader()
+        /// <summary>
+        /// Обнавляет текущий список Reader 
+        ///  *удаляет отключенные устройства
+        ///  *добавляет подключеннные устройства
+        /// </summary>
+        private void CheckListReader()
         {
-
             listReader.RemoveAll(item => !item.IsActive);
-            List<String> list = getListPort();
+            List<String> list = GetListPort();
             var listCom = from reader in listReader select reader.Port;
             var resultMatch = listCom.Where(a => !list.Contains(a));
 
@@ -108,32 +134,71 @@ namespace comReaderLib.Core
                 }
             }
         }
-        private void getData()
+        /// <summary>
+        /// возвращает список элементов для добавления в базу
+        /// </summary>
+        private List<CheckPointEntry> GetData()
         {
+            var listPoint = new List<CheckPointEntry>();
             foreach (var reader in listReader)
             {
-                reader.sendRequest();
+                reader.SendRequest();
             }
-            //TODO
             Thread.Sleep(500);
-            //
             foreach (var reader in listReader)
             {
-                view.ShowText(reader.getResponsу());
+                string responsy = reader.GetResponsу();
+                if (CheckData(responsy))
+                {
+                    var entryPoint = new CheckPointEntry();
+                    entryPoint.CardNumber = responsy;
+                    entryPoint.DeviceNumber = reader.DeviceNumber;
+                    entryPoint.CheckDate = DateTime.Now;
+                    listPoint.Add(entryPoint);
+                }
+                view.ShowText(responsy);
             }
+            return listPoint;
         }
-
-        private List<String> getListPort()
+        /// <summary>
+        /// Проверяет ответ от Reader на наличие данные
+        /// </summary>
+        /// <param name="responsy"></param> 
+        /// Ответ от Reader
+        /// <returns></returns>
+        /// True - данные есть
+        /// False - данных нет
+        private bool CheckData(string responsy)
+        {
+            bool Result = true;
+            //TODO: Проверить ответ 
+            string pattern = @"No";
+            Regex regex = new Regex(pattern);
+            MatchCollection matchGroup = regex.Matches(responsy);
+            if (matchGroup.Count == 1)
+            {
+                Result = false;
+            }
+            return Result;
+        }
+        /// <summary>
+        /// Возвращает список доступных портов на ПК
+        /// </summary>
+        /// <returns>
+        /// Возвращает список портов 
+        /// </returns>
+        private List<String> GetListPort()
         {
             List<string> list = new List<String>();
             list.AddRange(SerialPort.GetPortNames());
             return list;
         }
 
+        private Factory factory;
+        private DAOContext dao;
         private System.Timers.Timer timerUpdate;
         private List<Reader> listReader;
         private static Controller controller = null;
-        private bool working = true;
         private IView view;
     }
 }

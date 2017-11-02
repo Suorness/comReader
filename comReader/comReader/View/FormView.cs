@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace comReader.View
 {
@@ -11,7 +12,13 @@ namespace comReader.View
     {
         public void ShowText(string str)
         {
-            throw new NotImplementedException();
+            listData.Items.Add(str + "\r\n");                      
         }
+
+        public FormView (ListBox list)
+        {
+            listData = list;
+        }
+        ListBox listData;
     }
 }
