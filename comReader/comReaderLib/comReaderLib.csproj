@@ -54,6 +54,7 @@
     <Compile Include="Dao\DAOContextImpl.cs" />
     <Compile Include="Domain\Context.cs" />
     <Compile Include="Domain\CheckPointEntry.cs" />
+    <Compile Include="Domain\Device.cs" />
     <Compile Include="Domain\Person.cs" />
     <Compile Include="Interfaces\IView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

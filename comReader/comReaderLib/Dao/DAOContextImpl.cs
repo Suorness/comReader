@@ -52,6 +52,46 @@ namespace comReaderLib.Dao
                 db?.Dispose();
             }
         }
+        public void AddDevice(Device device)
+        {
+            db = new ContextReader();
+            try
+            {
+                db.Devices.Add(device);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                db?.Dispose();
+            }
+        }
+        
+        public bool CheckDevice(string deviceNumber)
+        {
+            bool Result = true;
+            db = new ContextReader();
+            try
+            {
+                var devices = from p in db.Devices where p.DeviceNumber == deviceNumber select p;
+                if (devices.Count() <= 0)
+                {
+                    Result = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                db?.Dispose();
+            }
+            return Result;
+        }
 
         public bool CheckPerson(string CardNumber)
         {
@@ -78,7 +118,6 @@ namespace comReaderLib.Dao
 
         private DAOContextImpl()
         {
-            //db = new ContextReader();
         }
         private ContextReader db;
         private static DAOContextImpl dao = null;

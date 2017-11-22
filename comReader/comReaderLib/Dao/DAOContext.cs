@@ -29,5 +29,16 @@ namespace comReaderLib.Dao
         /// </summary>
         /// <param name="person"></param>
         void AddPerson(Person person);
+        /// <summary>
+        /// Добавляет device в список устройств
+        /// </summary>
+        /// <param name="device"></param>
+        void AddDevice(Device device);
+        /// <summary>
+        /// Проверяет наличие устройства в списке устройств
+        /// </summary>
+        /// <param name="deviceNumber"> Номер устройства</param>
+        /// <returns>true - наличие; false - отсутсвие</returns>
+        bool CheckDevice(string deviceNumber);
     }
 }

@@ -50,6 +50,14 @@ namespace comReaderLib.Core
                 if (reader.IsActive)
                 {
                     listReader.Add(reader);
+                    if (!dao.CheckDevice(reader.DeviceNumber))
+                    {
+
+                        var device = new Device();
+                        device.DeviceNumber = reader.DeviceNumber;
+                        device.Description = "Описание отсутвует";
+                        dao.AddDevice(device);
+                    }
                     view.ShowText("Инициализация " + com + " прошла успешно");
                 }
                 else
@@ -81,6 +89,7 @@ namespace comReaderLib.Core
         /// <param name="e"></param>
         private void OnTimedUpdata(Object source, ElapsedEventArgs e)
         {
+            //timerUpdate.Enabled = false;
             view.ShowText("Обновление данных и устройств");
 
             CheckListReader();
@@ -93,7 +102,8 @@ namespace comReaderLib.Core
                     if (!dao.CheckPerson(point.CardNumber))
                     {
                         var person = new Person();
-                        person.CardNumber = point.CardNumber;                       
+                        person.CardNumber = point.CardNumber;
+                        person.DateOfBirth = DateTime.Now;
                         dao.AddPerson(person);
                     }
                 }
@@ -125,6 +135,7 @@ namespace comReaderLib.Core
                     if (reader.IsActive)
                     {
                         listReader.Add(reader);
+
                         view.ShowText("Инициализация " + com + " прошла успешно");
                     }
                     else

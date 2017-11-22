@@ -46,7 +46,7 @@
             // 
             // bnStop
             // 
-            this.bnStop.Location = new System.Drawing.Point(331, 32);
+            this.bnStop.Location = new System.Drawing.Point(696, 32);
             this.bnStop.Name = "bnStop";
             this.bnStop.Size = new System.Drawing.Size(182, 23);
             this.bnStop.TabIndex = 0;
@@ -57,7 +57,7 @@
             // bnStart
             // 
             this.bnStart.Enabled = false;
-            this.bnStart.Location = new System.Drawing.Point(331, 71);
+            this.bnStart.Location = new System.Drawing.Point(696, 71);
             this.bnStart.Name = "bnStart";
             this.bnStart.Size = new System.Drawing.Size(182, 23);
             this.bnStart.TabIndex = 1;
@@ -73,7 +73,7 @@
             this.listEvent.Location = new System.Drawing.Point(12, 58);
             this.listEvent.Name = "listEvent";
             this.listEvent.ScrollAlwaysVisible = true;
-            this.listEvent.Size = new System.Drawing.Size(296, 164);
+            this.listEvent.Size = new System.Drawing.Size(662, 164);
             this.listEvent.TabIndex = 2;
             // 
             // label1
@@ -96,7 +96,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(525, 261);
+            this.ClientSize = new System.Drawing.Size(903, 261);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.listEvent);
             this.Controls.Add(this.bnStart);
