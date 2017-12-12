@@ -13,22 +13,29 @@ namespace comReaderLib.Core
     {
         public Reader(string portNumber)
         {
-            serialPort = new SerialPort();
-            port = portNumber;
-            serialPort.PortName = portNumber;
-            serialPort.BaudRate = 9600;
-            serialPort.Parity = Parity.None;
-            serialPort.StopBits = StopBits.One;
-            serialPort.Open();
+            try
+            {
+                serialPort = new SerialPort();
+                port = portNumber;
+                serialPort.PortName = portNumber;
+                serialPort.BaudRate = 9600;
+                serialPort.Parity = Parity.None;
+                serialPort.StopBits = StopBits.One;
+                serialPort.Open();
 
-            deviceNumber = GetDeviceNumber();
-            if (deviceNumber != null)
-            {
-                IsActive = true;
+                deviceNumber = GetDeviceNumber();
+                if (deviceNumber != null)
+                {
+                    IsActive = true;
+                }
+                else
+                {
+                    serialPort.Close();
+                }
             }
-            else
+            catch (Exception)
             {
-                serialPort.Close();
+                IsActive = false;
             }
         }
         /// <summary>
@@ -36,8 +43,15 @@ namespace comReaderLib.Core
         /// </summary>
         public void SendRequest()
         {
-            //"#05244 r" + "\r\n";
-            serialPort.WriteLine("#" + deviceNumber + " r" + "\r\n");
+            try
+            {
+                //"#05244 r" + "\r\n";
+                serialPort.WriteLine("#" + deviceNumber + " r" + "\r\n");
+            }
+            catch (Exception)
+            {
+                IsActive = false;
+            }
         }
         /// <summary>
         /// Получение данных из буфера устройства
@@ -54,6 +68,8 @@ namespace comReaderLib.Core
                 IsActive = false;
             }
             return str;
+
+
         }
         /// <summary>
         /// Получение номера устройства
@@ -62,17 +78,23 @@ namespace comReaderLib.Core
         private string GetDeviceNumber()
         {
             string result = null;
-
-            serialPort.WriteLine("i");
-            Thread.Sleep(500);
-            string responsy = GetResponsу();
-            string pattern = @"S/N:(\d+)";
-            Regex regex = new Regex(pattern);
-            MatchCollection matchGroup = regex.Matches(responsy);
-            if (matchGroup.Count == 1)
+            try
             {
-                result = matchGroup[0].Value;
-                result = result.Replace("S/N:", String.Empty);
+                serialPort.WriteLine("i");
+                Thread.Sleep(500);
+                string responsy = GetResponsу();
+                string pattern = @"S/N:(\d+)";
+                Regex regex = new Regex(pattern);
+                MatchCollection matchGroup = regex.Matches(responsy);
+                if (matchGroup.Count == 1)
+                {
+                    result = matchGroup[0].Value;
+                    result = result.Replace("S/N:", String.Empty);
+                }
+            }
+            catch (Exception)
+            {
+                result = String.Empty;
             }
             return result;
         }

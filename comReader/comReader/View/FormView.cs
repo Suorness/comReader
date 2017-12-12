@@ -19,19 +19,11 @@ namespace comReader.View
         }
         public List<string> GetData()
         {
-            //var newData = data.Cop
             return data;
         }
         public FormView ()
         {
         }
         List<string> data = new List<string>();
-        //private int count = 0;
-        //BindingList<MyData> data = new BindingList<MyData>();
-        //public class MyData
-        //{
-        //    public string Name { get; set; }
-        //    public int Id { get; set; }
-        //}
     }
 }

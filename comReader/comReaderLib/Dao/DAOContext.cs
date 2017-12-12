@@ -7,28 +7,14 @@ using System.Threading.Tasks;
 
 namespace comReaderLib.Dao
 {
-    public interface DAOContext
+    public interface IDAOContext
     {
         /// <summary>
         /// Добавляет новые данные от валидатора в базу 
         /// </summary>
-        /// <param name="checkPoint"></param>
+        /// <param name="checkPoints"></param>
         /// 
-        void AddCheckPoint(List<CheckPointEntry> checkPoint);
-        /// <summary>
-        /// Проверяет наличие в базе записи с данной карточкой 
-        /// </summary>
-        /// <param name="person"></param>
-        /// <returns>
-        /// True - присутвует 
-        /// False - отсутствует 
-        /// </returns>
-        bool CheckPerson(string CardNumber);
-        /// <summary>
-        /// Добавляет person в список доступных людей
-        /// </summary>
-        /// <param name="person"></param>
-        void AddPerson(Person person);
+        void AddCheckPoint(List<CheckPointEntry> checkPoints);
         /// <summary>
         /// Добавляет device в список устройств
         /// </summary>
@@ -40,5 +26,8 @@ namespace comReaderLib.Dao
         /// <param name="deviceNumber"> Номер устройства</param>
         /// <returns>true - наличие; false - отсутсвие</returns>
         bool CheckDevice(string deviceNumber);
+
+        void AddCard(Card card);
+        bool CheckCard(string cardNumber);
     }
 }

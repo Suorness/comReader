@@ -1,6 +1,7 @@
 ﻿using comReaderLib.Dao;
 using comReaderLib.Domain;
 using comReaderLib.Interfaces;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -26,6 +27,8 @@ namespace comReaderLib.Core
             dao = factory.GetDao();
         }
 
+        private static Logger logger = LogManager.GetCurrentClassLogger();
+
         public static Controller GetInstanse(IView view)
         {
             if (controller == null)
@@ -35,6 +38,7 @@ namespace comReaderLib.Core
             }
             return controller;
         }
+
         /// <summary>
         /// Запуск контроллера
         /// </summary>
@@ -42,10 +46,10 @@ namespace comReaderLib.Core
         {
             listReader = new List<Reader>();
             List<String> list = GetListPort();
-            view.ShowText("Начало работы");
+            ShowMessage("Начало работы");
             foreach (var com in list)
             {
-                view.ShowText("Инициализация " + com);
+                ShowMessage("Инициализация " + com);
                 var reader = new Reader(com);
                 if (reader.IsActive)
                 {
@@ -53,16 +57,18 @@ namespace comReaderLib.Core
                     if (!dao.CheckDevice(reader.DeviceNumber))
                     {
 
-                        var device = new Device();
-                        device.DeviceNumber = reader.DeviceNumber;
-                        device.Description = "Описание отсутвует";
+                        var device = new Device
+                        {
+                            DeviceNumber = reader.DeviceNumber,
+                            Description = "Описание отсутвует"
+                        };
                         dao.AddDevice(device);
                     }
-                    view.ShowText("Инициализация " + com + " прошла успешно");
+                    ShowMessage("Инициализация " + com + " прошла успешно");
                 }
                 else
                 {
-                    view.ShowText("Инициализация " + com + " провалилась");
+                    ShowMessage("Инициализация " + com + " провалилась");
                 }
 
             }
@@ -73,6 +79,7 @@ namespace comReaderLib.Core
         /// </summary>
         public void Stop()
         {
+            timerUpdate.Stop();
             timerUpdate.Enabled = false;
         }
         /// <summary>
@@ -81,6 +88,7 @@ namespace comReaderLib.Core
         public void Resume()
         {
             timerUpdate.Enabled = true;
+            timerUpdate.Start();
         }
         /// <summary>
         /// Обновление данных с устройст по таймеру
@@ -91,29 +99,39 @@ namespace comReaderLib.Core
         {
             //timerUpdate.Enabled = false;
             view.ShowText("Обновление данных и устройств");
-
             CheckListReader();
             var list = GetData();
             try
             {
-                dao.AddCheckPoint(list);
-                foreach (var point in list)
-                {
-                    if (!dao.CheckPerson(point.CardNumber))
+                if ( (list!= null) && (list.Count()> 0) )
+                { 
+                    
+                    foreach (var point in list)
                     {
-                        var person = new Person();
-                        person.CardNumber = point.CardNumber;
-                        person.DateOfBirth = DateTime.Now;
-                        dao.AddPerson(person);
+                        if (!dao.CheckCard(point.CardNumber))
+                        {
+
+                            var card = new Card
+                            {
+                                CardNumber = point.CardNumber
+                            };
+
+                            dao.AddCard(card);
+                        }
+                        ;
                     }
+                    dao.AddCheckPoint(list);
+                    
                 }
             }
             catch (Exception ex)
             {
-                string message = "Произошла ошибка при работе с базой данных" + ex.Message;
+                string message = "Произошла ошибка при работе с базой данных: " + ex.Message;
                 view.ShowText(message);
+                logger.Error(message);
             }      
         }
+
         /// <summary>
         /// Обнавляет текущий список Reader 
         ///  *удаляет отключенные устройства
@@ -130,17 +148,16 @@ namespace comReaderLib.Core
             {
                 foreach (var com in resultMatch)
                 {
-                    view.ShowText("Инициализация " + com);
+                    ShowMessage("Инициализация " + com);
                     var reader = new Reader(com);
                     if (reader.IsActive)
                     {
                         listReader.Add(reader);
-
-                        view.ShowText("Инициализация " + com + " прошла успешно");
+                        ShowMessage("Инициализация " + com + " прошла успешно");
                     }
                     else
                     {
-                        view.ShowText("Инициализация " + com + " провалилась");
+                        ShowMessage("Инициализация " + com + " провалилась");
                     }
                 }
             }
@@ -161,16 +178,19 @@ namespace comReaderLib.Core
                 string responsy = reader.GetResponsу();
                 if (CheckData(responsy))
                 {
-                    var entryPoint = new CheckPointEntry();
-                    entryPoint.CardNumber = responsy;
-                    entryPoint.DeviceNumber = reader.DeviceNumber;
-                    entryPoint.CheckDate = DateTime.Now;
+                    var entryPoint = new CheckPointEntry
+                    {
+                        CardNumber = responsy,
+                        DeviceNumber = reader.DeviceNumber,
+                        CheckDate = DateTime.Now
+                    };
                     listPoint.Add(entryPoint);
                 }
                 view.ShowText(responsy);
             }
             return listPoint;
         }
+
         /// <summary>
         /// Проверяет ответ от Reader на наличие данные
         /// </summary>
@@ -181,16 +201,19 @@ namespace comReaderLib.Core
         /// False - данных нет
         private bool CheckData(string responsy)
         {
-            bool Result = true;
-            //TODO: Проверить ответ 
+            bool result = true;
             string pattern = @"No";
             Regex regex = new Regex(pattern);
             MatchCollection matchGroup = regex.Matches(responsy);
             if (matchGroup.Count == 1)
             {
-                Result = false;
+                result = false;
             }
-            return Result;
+            else if (responsy == String.Empty)
+            {
+                result = false;
+            }
+            return result;
         }
         /// <summary>
         /// Возвращает список доступных портов на ПК
@@ -205,8 +228,14 @@ namespace comReaderLib.Core
             return list;
         }
 
+        private void ShowMessage(string message)
+        {
+            view.ShowText(message);
+            logger.Info(message);
+        }
+
         private Factory factory;
-        private DAOContext dao;
+        private IDAOContext dao;
         private System.Timers.Timer timerUpdate;
         private List<Reader> listReader;
         private static Controller controller = null;

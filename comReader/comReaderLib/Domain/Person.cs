@@ -16,5 +16,7 @@ namespace comReaderLib.Domain
         public string Password { get; set; }
         public string PathToImage { get; set; }
         public string CardNumber { get; set; }
+        
+        public virtual Card Card { get; set; }
     }
 }

@@ -17,13 +17,13 @@ namespace comReaderLib.Core
             }
             return factory;
         }
-        public DAOContext GetDao()
+        public IDAOContext GetDao()
         {
             return dao;
         }
 
         private Factory() { }
         private static Factory factory = null;
-        private DAOContext dao = DAOContextImpl.GetInstance();
+        private IDAOContext dao = new MysqlDao();
     }
 }

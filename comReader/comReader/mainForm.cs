@@ -1,14 +1,6 @@
 ﻿using comReader.View;
 using comReaderLib.Core;
-using comReaderLib.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace comReader
@@ -20,6 +12,8 @@ namespace comReader
         public mainForm()
         {
             InitializeComponent();
+            Icon = Properties.Resources.taskBar;
+            trayIcon.Icon = Properties.Resources.taskBar;
         }
 
         private void mainForm_Load(object sender, EventArgs e)
@@ -33,6 +27,7 @@ namespace comReader
             this.Show();
             this.WindowState = FormWindowState.Normal;
             trayIcon.Visible = false;
+            this.ShowInTaskbar = true;
 
         }
 
@@ -54,28 +49,26 @@ namespace comReader
 
         private void timerUpdateLog_Tick(object sender, EventArgs e)
         {
-            //int actualIndex = listEvent.SelectedIndex;
-            //listEvent.DataSource = null;
-            //listEvent.DataSource = formView.GetData();
-            //listEvent.DisplayMember = "Name";
-            //listEvent.ValueMember = "Id";
-            //listEvent.SelectedIndex = actualIndex;
-            //listEvent.Invalidate();
             AddNewItem();
         }
 
         private void AddNewItem()
         {
-            var newList = formView.GetData();
-            int index = 1;
-            foreach(var item in newList)
+            try
             {
-                if (index>listEvent.Items.Count)
+                var newList = formView.GetData();
+                int index = 1;
+
+                foreach (var item in newList)
                 {
-                    listEvent.Items.Add(item);
+                    if (index > listEvent.Items.Count)
+                    {
+                        listEvent.Items.Add(item);
+                    }
+                    index++;
                 }
-                index++;
             }
+            catch (Exception) { }
         }
 
         private void bnStart_Click(object sender, EventArgs e)
@@ -83,6 +76,10 @@ namespace comReader
             controller.Resume();
             bnStart.Enabled = false;
             bnStop.Enabled = true;
+        }
+
+        private void mainForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
         }
     }
 }

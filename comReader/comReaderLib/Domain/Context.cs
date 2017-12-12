@@ -12,6 +12,7 @@ namespace comReaderLib.Domain
         public DbSet<Person> Persons { get; set; }
         public DbSet<CheckPointEntry> CheckPointEntries { get; set; }
         public DbSet<Device> Devices { get; set; }
+        public DbSet<Card> Cards { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -19,6 +20,11 @@ namespace comReaderLib.Domain
                 .HasKey(p => p.Id);
 
             modelBuilder.Entity<Person>()
+                .HasKey(p => p.Id)
+                .HasOptional(p => p.Card)
+                .WithRequired(card => card.Person);
+
+            modelBuilder.Entity<Card>()
                 .HasKey(p => p.Id);
 
             modelBuilder.Entity<Device>()

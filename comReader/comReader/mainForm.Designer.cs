@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(mainForm));
             this.trayIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.bnStop = new System.Windows.Forms.Button();
             this.bnStart = new System.Windows.Forms.Button();
@@ -40,8 +39,7 @@
             // 
             // trayIcon
             // 
-            this.trayIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("trayIcon.Icon")));
-            this.trayIcon.Text = "no text";
+            this.trayIcon.Text = "Security manager\r\nClick to expand";
             this.trayIcon.MouseClick += new System.Windows.Forms.MouseEventHandler(this.trayIcon_MouseClick);
             // 
             // bnStop
@@ -69,6 +67,7 @@
             // 
             this.listEvent.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.listEvent.FormattingEnabled = true;
+            this.listEvent.HorizontalScrollbar = true;
             this.listEvent.ItemHeight = 16;
             this.listEvent.Location = new System.Drawing.Point(12, 58);
             this.listEvent.Name = "listEvent";
@@ -102,7 +101,8 @@
             this.Controls.Add(this.bnStart);
             this.Controls.Add(this.bnStop);
             this.Name = "mainForm";
-            this.Text = "mainForm";
+            this.Text = "Security manager";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.mainForm_FormClosed);
             this.Load += new System.EventHandler(this.mainForm_Load);
             this.Resize += new System.EventHandler(this.mainForm_Resize);
             this.ResumeLayout(false);
