@@ -80,6 +80,12 @@ namespace comReader
 
         private void mainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            //controller.StopProgram();
+        }
+
+        private void mainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            controller.StopProgram();
         }
     }
 }

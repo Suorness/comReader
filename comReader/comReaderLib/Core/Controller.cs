@@ -82,6 +82,14 @@ namespace comReaderLib.Core
             timerUpdate.Stop();
             timerUpdate.Enabled = false;
         }
+
+        public void StopProgram()
+        {
+            foreach (var reader in listReader)
+            {
+                reader.Stop();
+            }
+        }
         /// <summary>
         /// Возобновляет обновление данных
         /// </summary>

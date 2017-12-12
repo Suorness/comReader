@@ -102,6 +102,7 @@
             this.Controls.Add(this.bnStop);
             this.Name = "mainForm";
             this.Text = "Security manager";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.mainForm_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.mainForm_FormClosed);
             this.Load += new System.EventHandler(this.mainForm_Load);
             this.Resize += new System.EventHandler(this.mainForm_Resize);

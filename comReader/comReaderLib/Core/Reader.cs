@@ -111,6 +111,14 @@ namespace comReaderLib.Core
         /// </summary>
         public string DeviceNumber { get => deviceNumber; }
 
+        public void Stop()
+        {
+            try
+            {
+                serialPort.Close();
+            }
+            catch (Exception) { }
+        }
 
         private SerialPort serialPort;
         private string port;
